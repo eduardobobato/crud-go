@@ -3,7 +3,7 @@ package dao
 import (
 	"context"
 	"log"
-	"model"
+	model "github.com/eduardobobato/crud-go/model"
 	"net/url"
 	"time"
 

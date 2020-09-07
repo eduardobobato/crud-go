@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"model"
+	model "github.com/eduardobobato/crud-go/model"
 	"net/http"
 )
 

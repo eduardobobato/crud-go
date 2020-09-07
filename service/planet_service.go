@@ -1,8 +1,8 @@
 package service
 
 import (
-	DAO "config/dao"
-	"model"
+	DAO "github.com/eduardobobato/crud-go/config/dao"
+	model "github.com/eduardobobato/crud-go/model"
 	"net/url"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"

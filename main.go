@@ -16,12 +16,12 @@
 package main
 
 import (
-	Config "config"
-	PlanetDAO "config/dao"
+	Config "github.com/eduardobobato/crud-go/config"
+	PlanetDAO "github.com/eduardobobato/crud-go/config/dao"
 	"fmt"
 	"log"
 	"net/http"
-	planetrouter "router"
+	planetrouter "github.com/eduardobobato/crud-go/router"
 
 	"github.com/gorilla/mux"
 )
