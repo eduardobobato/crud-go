@@ -2,9 +2,9 @@ package planetrouter
 
 import (
 	"encoding/json"
-	"model"
 	"net/http"
-	"service"
+	model "github.com/eduardobobato/crud-go/model"
+	service "github.com/eduardobobato/crud-go/service"
 
 	"github.com/gorilla/mux"
 )
