@@ -1,0 +1,3 @@
+serveruri="mongodb+srv://dbUser:dbUserPassword@crud-go-cluster.3becr.gcp.mongodb.net/planet_db?retryWrites=true&w=majority"
+database="planet_db"
+collection="planet"
