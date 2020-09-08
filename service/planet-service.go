@@ -10,24 +10,41 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// PlanetService : struct PlanetService
-type PlanetService struct{}
+// PlanetService : interface to service
+type PlanetService interface {
+	GetAll(params url.Values) ([]model.Planet, error)
+	GetByID(id string) (model.Planet, error)
+	Create(planet model.Planet) (model.Planet, error)
+	Update(id string, planet model.Planet) error
+	Delete(id string) error
+	ValidatePlanet(planet *model.Planet) error
+}
 
-var api = SwAPI{}
-var planetDao = dao.PlanetDAO{}
+// PlanetService : struct PlanetService
+type service struct{}
+
+var api SwAPI
+var planetDao dao.PlanetDao
+
+// NewPlanetService : Instance a new service
+func NewPlanetService(planetDAO dao.PlanetDao, sw SwAPI) PlanetService {
+	api = sw
+	planetDao = planetDAO
+	return &service{}
+}
 
 // GetAll : Get all planets
-func (m PlanetService) GetAll(params url.Values) ([]model.Planet, error) {
+func (*service) GetAll(params url.Values) ([]model.Planet, error) {
 	return planetDao.GetAll(params)
 }
 
 // GetByID : Get planet by id
-func (m PlanetService) GetByID(id string) (model.Planet, error) {
+func (*service) GetByID(id string) (model.Planet, error) {
 	return planetDao.GetByID(id)
 }
 
 // Create : Create a planet
-func (m PlanetService) Create(planet model.Planet) (model.Planet, error) {
+func (*service) Create(planet model.Planet) (model.Planet, error) {
 	planet.ID = primitive.NewObjectID()
 	planetAPI := api.FindPlannet(planet.Nome)
 	if planetAPI.Filmes != nil {
@@ -37,16 +54,17 @@ func (m PlanetService) Create(planet model.Planet) (model.Planet, error) {
 }
 
 // Update : Update a planet
-func (m PlanetService) Update(id string, planet model.Planet) error {
+func (*service) Update(id string, planet model.Planet) error {
 	return planetDao.Update(id, planet)
 }
 
 // Delete : Delete a planet
-func (m PlanetService) Delete(id string) error {
+func (*service) Delete(id string) error {
 	return planetDao.Delete(id)
 }
 
-func (m PlanetService) ValidatePlanet(planet *model.Planet) error {
+// ValidatePlanet : Validate fields
+func (*service) ValidatePlanet(planet *model.Planet) error {
 	if planet == nil {
 		return errors.New("The planet is empty")
 	}

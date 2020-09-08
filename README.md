@@ -4,11 +4,7 @@
 go get github.com/gorilla/mux
 go get go.mongodb.org/mongo-driver/mongo
 go get github.com/BurntSushi/toml
-go get github.com/eduardobobato/crud-go/model
-go get github.com/eduardobobato/crud-go/config
-go get github.com/eduardobobato/crud-go/dao
-go get github.com/eduardobobato/crud-go/service
-go get github.com/eduardobobato/crud-go/controller
+go get github.com/stretchr/testify
 
 ### Rodando App
 go run .\main.go
@@ -20,3 +16,15 @@ go run .\main.go
 ### Rondando no Docker
 docker build -f "Dockerfile" -t crud-go:1.0.0 .
 docker run -d -p 3333:3333 crud-go:1.0.0
+
+### Parameter of GetAllPlanets
+parameters:
+  - name: Nome
+    in: query
+    type: string
+  - name: Clima
+    in: query
+    type: string
+  - name: Terreno
+    in: query
+    type: string

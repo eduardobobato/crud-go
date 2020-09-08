@@ -30,19 +30,3 @@ type Planet struct {
 	// the number of appearances in swatter filts
 	CountAparicoes int `bson:"CountAparicoes" json:"CountAparicoes"`
 }
-
-// A list of planet
-// swagger:response planetsResponse
-type planetsResponseWrapper struct {
-	// All current planet
-	// in: body
-	Body []Planet
-}
-
-// A single of planet
-// swagger:response planetResponse
-type planetResponseWrapper struct {
-	// A planet
-	// in: body
-	Body []Planet
-}

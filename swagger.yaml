@@ -48,6 +48,16 @@ paths:
     get:
       description: Return a list of planets
       operationId: GetAllPlanets
+      parameters:
+        - name: Nome
+          in: query
+          type: string
+        - name: Clima
+          in: query
+          type: string
+        - name: Terreno
+          in: query
+          type: string
       responses:
         "200":
           $ref: '#/responses/planetsResponse'

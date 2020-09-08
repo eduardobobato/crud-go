@@ -16,43 +16,29 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-
 	"github.com/eduardobobato/crud-go/config"
 	"github.com/eduardobobato/crud-go/controller"
 	"github.com/eduardobobato/crud-go/dao"
-	"github.com/go-openapi/runtime/middleware"
-
-	"github.com/gorilla/mux"
+	router "github.com/eduardobobato/crud-go/http"
+	"github.com/eduardobobato/crud-go/service"
 )
 
-var planetDao = dao.PlanetDAO{}
-var configAPI = config.Config{}
-
-func init() {
-	configAPI.Read()
-	planetDao.ServerURI = configAPI.ServerURI
-	planetDao.Database = configAPI.Database
-	planetDao.Collection = configAPI.Collection
-	planetDao.Connect()
-}
+var (
+	configAPI        config.Config               = config.NewConfig()
+	swAPI            service.SwAPI               = service.NewSwAPI()
+	planetDAO        dao.PlanetDao               = dao.NewMongoDAO(configAPI)
+	planetService    service.PlanetService       = service.NewPlanetService(planetDAO, swAPI)
+	httpRouter       router.Router               = router.NewMuxRouter()
+	planetController controller.PlanetController = controller.NewPlanetController(planetService)
+)
 
 func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/api/v1/planet", controller.GetAll).Methods("GET")
-	r.HandleFunc("/api/v1/planet/{id}", controller.GetByID).Methods("GET")
-	r.HandleFunc("/api/v1/planet", controller.Create).Methods("POST")
-	r.HandleFunc("/api/v1/planet/{id}", controller.Update).Methods("PUT")
-	r.HandleFunc("/api/v1/planet/{id}", controller.Delete).Methods("DELETE")
-
-	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
-	sh := middleware.Redoc(opts, nil)
-	r.Handle("/docs", sh)
-	r.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
-
-	var port = ":3333"
-	fmt.Println("Server running in port:", port)
-	log.Fatal(http.ListenAndServe(port, r))
+	const port string = ":3333"
+	httpRouter.GET("/api/v1/planet", planetController.GetAll)
+	httpRouter.GET("/api/v1/planet/{id}", planetController.GetByID)
+	httpRouter.POST("/api/v1/planet", planetController.Create)
+	httpRouter.PUT("/api/v1/planet/{id}", planetController.Update)
+	httpRouter.DELETE("/api/v1/planet/{id}", planetController.Delete)
+	httpRouter.SWAGGER("/docs", "/swagger.yaml")
+	httpRouter.SERVE(port)
 }

@@ -4,39 +4,45 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/eduardobobato/crud-go/errors"
 	"github.com/eduardobobato/crud-go/model"
 	"github.com/eduardobobato/crud-go/service"
 
 	"github.com/gorilla/mux"
 )
 
-var planetSerive = service.PlanetService{}
-
-// respondWithError : Set a error message in response
-func respondWithError(w http.ResponseWriter, code int, msg string) {
-	respondWithJSON(w, code, map[string]string{"error": msg})
+// PlanetController : is a interface for planet controller
+type PlanetController interface {
+	GetAll(w http.ResponseWriter, r *http.Request)
+	GetByID(w http.ResponseWriter, r *http.Request)
+	Create(w http.ResponseWriter, r *http.Request)
+	Update(w http.ResponseWriter, r *http.Request)
+	Delete(w http.ResponseWriter, r *http.Request)
 }
 
-// respondWithJSON : Set message in response
-func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(response)
+type controller struct{}
+
+var planetSerive service.PlanetService
+
+// NewPlanetController : return a new planet controller
+func NewPlanetController(service service.PlanetService) PlanetController {
+	planetSerive = service
+	return &controller{}
 }
 
 // swagger:route GET /planet planet GetAllPlanets
 // Return a list of planets
+// consumes:
+//
 // responses:
 //	200: planetsResponse
 
-// TODO: Incluir optional param de queryParam
 // GetAll : Get all planets
-func GetAll(w http.ResponseWriter, r *http.Request) {
+func (*controller) GetAll(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 	planets, err := planetSerive.GetAll(params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		respondWithError(w, http.StatusInternalServerError, errors.ServiceError{Message: err.Error()})
 		return
 	}
 	respondWithJSON(w, http.StatusOK, planets)
@@ -48,11 +54,11 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 //	200: planetResponse
 
 // GetByID : Get planet by id
-func GetByID(w http.ResponseWriter, r *http.Request) {
+func (*controller) GetByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	planet, err := planetSerive.GetByID(params["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid Planet ID")
+		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: err.Error()})
 		return
 	}
 	respondWithJSON(w, http.StatusOK, planet)
@@ -65,16 +71,20 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 //	200: planetResponse
 
 // Create : Create a planet
-func Create(w http.ResponseWriter, r *http.Request) {
+func (*controller) Create(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var planet model.Planet
 	if err := json.NewDecoder(r.Body).Decode(&planet); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: "Invalid request payload"})
+		return
+	}
+	if err := planetSerive.ValidatePlanet(&planet); err != nil {
+		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: err.Error()})
 		return
 	}
 	newPlanet, err := planetSerive.Create(planet)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		respondWithError(w, http.StatusInternalServerError, errors.ServiceError{Message: err.Error()})
 		return
 	}
 	respondWithJSON(w, http.StatusCreated, newPlanet)
@@ -87,34 +97,51 @@ func Create(w http.ResponseWriter, r *http.Request) {
 //	200: planetResponse
 
 // Update : Update a planet
-func Update(w http.ResponseWriter, r *http.Request) {
+func (*controller) Update(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	params := mux.Vars(r)
 	var planet model.Planet
 	if err := json.NewDecoder(r.Body).Decode(&planet); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: "Invalid request payload"})
+		return
+	}
+	if err := planetSerive.ValidatePlanet(&planet); err != nil {
+		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: err.Error()})
 		return
 	}
 	if err := planetSerive.Update(params["id"], planet); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		respondWithError(w, http.StatusInternalServerError, errors.ServiceError{Message: err.Error()})
 		return
 	}
-	respondWithJSON(w, http.StatusOK, map[string]string{"result": planet.Nome + " atualizado com sucesso!"})
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Successfully updated " + planet.Nome + "!"})
 }
 
 // swagger:route DELETE /planet/{id} planet DeletePlanetById
 // Delete a planet by id
 //
 // responses:
-//	201: planetResponse
+//	200: planetResponse
 
 // Delete : Delete a planet
-func Delete(w http.ResponseWriter, r *http.Request) {
+func (*controller) Delete(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	params := mux.Vars(r)
 	if err := planetSerive.Delete(params["id"]); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		respondWithError(w, http.StatusInternalServerError, errors.ServiceError{Message: err.Error()})
 		return
 	}
-	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Success!"})
+}
+
+// respondWithError : Set a error message in response
+func respondWithError(w http.ResponseWriter, code int, msg errors.ServiceError) {
+	respondWithJSON(w, code, msg)
+}
+
+// respondWithJSON : Set message in response
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
 }

@@ -4,12 +4,19 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	model "github.com/eduardobobato/crud-go/model"
 	"net/http"
+
+	model "github.com/eduardobobato/crud-go/model"
 )
 
-// SwAPI : Sctruct
-type SwAPI struct{}
+// SwAPI : interface
+type SwAPI interface {
+	FindPlannet(nomePlaneta string) model.PlanetAPI
+	Find(url string) model.ReturnAPI
+}
+
+// api : Sctruct
+type swAPI struct{}
 
 // URL Reference
 const (
@@ -17,8 +24,13 @@ const (
 	PLANET = "/planets"
 )
 
+// NewSwAPI : return a new NewSwAPI
+func NewSwAPI() SwAPI {
+	return &swAPI{}
+}
+
 // FindPlannet : Find plannet by Name
-func (m SwAPI) FindPlannet(nomePlaneta string) model.PlanetAPI {
+func (m *swAPI) FindPlannet(nomePlaneta string) model.PlanetAPI {
 	url := APIURL + PLANET
 	var planeta model.PlanetAPI
 	hasMath := false
@@ -36,7 +48,7 @@ func (m SwAPI) FindPlannet(nomePlaneta string) model.PlanetAPI {
 	return planeta
 }
 
-func (m SwAPI) Find(url string) model.ReturnAPI {
+func (*swAPI) Find(url string) model.ReturnAPI {
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
