@@ -112,7 +112,6 @@ func (*controller) Create(w http.ResponseWriter, r *http.Request) {
 // responses:
 //	200: planetResponse
 //  400: serviceErrorResponse
-//  500: serviceErrorResponse
 
 // Update : Update a planet
 func (*controller) Update(w http.ResponseWriter, r *http.Request) {
@@ -128,7 +127,7 @@ func (*controller) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := planetSerive.Update(params["id"], planet); err != nil {
-		respondWithError(w, http.StatusInternalServerError, errors.ServiceError{Message: err.Error()})
+		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: err.Error()})
 		return
 	}
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Successfully updated " + planet.Nome + "!"})
@@ -139,14 +138,13 @@ func (*controller) Update(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //	200: planetResponse
-//  500: serviceErrorResponse
+//  400: serviceErrorResponse
 
 // Delete : Delete a planet
 func (*controller) Delete(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
 	params := mux.Vars(r)
 	if err := planetSerive.Delete(params["id"]); err != nil {
-		respondWithError(w, http.StatusInternalServerError, errors.ServiceError{Message: err.Error()})
+		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: err.Error()})
 		return
 	}
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Success!"})
