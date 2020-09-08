@@ -19,3 +19,6 @@ go test ./service/... ./controller/...
 ### Rondando no Docker
 docker build -f "Dockerfile" -t crud-go:1.0.0 .
 docker run -d -p 3333:3333 crud-go:1.0.0
+
+#### Com Swarm
+docker-compose up --build
