@@ -26,10 +26,10 @@ func (mock *MockDAO) GetAll(params *url.Values) ([]model.Planet, error) {
 	return result.([]model.Planet), args.Error(1)
 }
 
-func (mock *MockDAO) GetByID(id string) (model.Planet, error) {
+func (mock *MockDAO) GetByID(id string) (*model.Planet, error) {
 	args := mock.Called()
 	result := args.Get(0)
-	return result.(model.Planet), args.Error(1)
+	return result.(*model.Planet), args.Error(1)
 }
 func (mock *MockDAO) Delete(id string) error {
 	args := mock.Called()
@@ -103,7 +103,7 @@ func TestGetByID(t *testing.T) {
 	objectID, _ := primitive.ObjectIDFromHex(stringID)
 
 	planet := model.Planet{ID: objectID, Nome: "A", Terreno: "B", Clima: "C", CountAparicoes: 0}
-	mockDao.On("GetByID").Return(planet, nil)
+	mockDao.On("GetByID").Return(&planet, nil)
 
 	testService := NewPlanetService(mockDao)
 

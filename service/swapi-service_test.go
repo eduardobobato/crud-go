@@ -9,7 +9,7 @@ import (
 func TestFindPlannet(t *testing.T) {
 	swAPIService := NewSwAPIService()
 
-	resp := swAPIService.FindPlannet("AAA")
+	resp, _ := swAPIService.FindPlannet("AAA")
 
 	assert.NotNil(t, resp)
 	assert.Nil(t, resp.Filmes)
@@ -21,7 +21,7 @@ func TestFindPlannet(t *testing.T) {
 func TestFindPlannetEmptyName(t *testing.T) {
 	swAPIService := NewSwAPIService()
 
-	resp := swAPIService.FindPlannet("")
+	resp, _ := swAPIService.FindPlannet("")
 
 	assert.NotNil(t, resp)
 	assert.Nil(t, resp.Filmes)
@@ -33,7 +33,7 @@ func TestFindPlannetEmptyName(t *testing.T) {
 func TestFindPlannetValidName(t *testing.T) {
 	swAPIService := NewSwAPIService()
 
-	resp := swAPIService.FindPlannet("Hoth")
+	resp, _ := swAPIService.FindPlannet("Hoth")
 
 	assert.NotNil(t, resp)
 	assert.NotNil(t, resp.Filmes)
