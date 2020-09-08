@@ -43,13 +43,13 @@ func (*repo) GetAll(params *url.Values) ([]model.Planet, error) {
 	if params != nil {
 		for key, value := range *params {
 			if key == "Nome" {
-				filter["Nome"] = bson.M{"$in": value}
+				filter[key] = bson.M{"$in": value}
 			}
 			if key == "Clima" {
-				filter["Clima"] = bson.M{"$in": value}
+				filter[key] = bson.M{"$in": value}
 			}
 			if key == "Terreno" {
-				filter["Terreno"] = bson.M{"$in": value}
+				filter[key] = bson.M{"$in": value}
 			}
 		}
 	}

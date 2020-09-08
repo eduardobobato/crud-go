@@ -9,8 +9,8 @@ import (
 	model "github.com/eduardobobato/crud-go/model"
 )
 
-// SwAPI : interface
-type SwAPI interface {
+// SwAPIService : interface
+type SwAPIService interface {
 	FindPlannet(nomePlaneta string) model.PlanetAPI
 	Find(url string) model.ReturnAPI
 }
@@ -24,8 +24,8 @@ const (
 	PLANET = "/planets"
 )
 
-// NewSwAPI : return a new NewSwAPI
-func NewSwAPI() SwAPI {
+// NewSwAPIService : return a new SwAPIService
+func NewSwAPIService() SwAPIService {
 	return &swAPI{}
 }
 
@@ -34,7 +34,7 @@ func (m *swAPI) FindPlannet(nomePlaneta string) model.PlanetAPI {
 	url := APIURL + PLANET
 	var planeta model.PlanetAPI
 	hasMath := false
-	for !hasMath && url != "" {
+	for !hasMath && url != "" && nomePlaneta != "" {
 		var response = m.Find(url)
 		for _, value := range response.Planetas {
 			if value.Nome == nomePlaneta {

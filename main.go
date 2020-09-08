@@ -25,11 +25,11 @@ import (
 
 var (
 	configAPI        config.Config               = config.NewConfig()
-	swAPI            service.SwAPI               = service.NewSwAPI()
 	planetDAO        dao.PlanetDao               = dao.NewMongoDAO(configAPI)
-	planetService    service.PlanetService       = service.NewPlanetService(planetDAO, swAPI)
+	swAPIService     service.SwAPIService        = service.NewSwAPIService()
+	planetService    service.PlanetService       = service.NewPlanetService(planetDAO)
+	planetController controller.PlanetController = controller.NewPlanetController(planetService, swAPIService)
 	httpRouter       router.Router               = router.NewMuxRouter()
-	planetController controller.PlanetController = controller.NewPlanetController(planetService)
 )
 
 func main() {

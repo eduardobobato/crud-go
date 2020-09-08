@@ -24,9 +24,12 @@ type controller struct{}
 
 var planetSerive service.PlanetService
 
+var swService service.SwAPIService
+
 // NewPlanetController : return a new planet controller
-func NewPlanetController(service service.PlanetService) PlanetController {
+func NewPlanetController(service service.PlanetService, sw service.SwAPIService) PlanetController {
 	planetSerive = service
+	swService = sw
 	return &controller{}
 }
 
@@ -81,6 +84,10 @@ func (*controller) Create(w http.ResponseWriter, r *http.Request) {
 	if err := planetSerive.ValidatePlanet(&planet); err != nil {
 		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: err.Error()})
 		return
+	}
+	planetAPI := swService.FindPlannet(planet.Nome)
+	if planetAPI.Filmes != nil {
+		planet.CountAparicoes = len(planetAPI.Filmes)
 	}
 	newPlanet, err := planetSerive.Create(planet)
 	if err != nil {

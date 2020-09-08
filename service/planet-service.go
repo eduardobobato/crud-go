@@ -23,13 +23,11 @@ type PlanetService interface {
 // PlanetService : struct PlanetService
 type service struct{}
 
-var api SwAPI
 var planetDao dao.PlanetDao
 
 // NewPlanetService : Instance a new service
-func NewPlanetService(planetDAO dao.PlanetDao, sw SwAPI) PlanetService {
+func NewPlanetService(planetDAO dao.PlanetDao) PlanetService {
 	planetDao = planetDAO
-	api = sw
 	return &service{}
 }
 
@@ -46,10 +44,6 @@ func (*service) GetByID(id string) (model.Planet, error) {
 // Create : Create a planet
 func (*service) Create(planet model.Planet) (model.Planet, error) {
 	planet.ID = primitive.NewObjectID()
-	planetAPI := api.FindPlannet(planet.Nome)
-	if planetAPI.Filmes != nil {
-		planet.CountAparicoes = len(planetAPI.Filmes)
-	}
 	return planetDao.Create(planet)
 }
 
