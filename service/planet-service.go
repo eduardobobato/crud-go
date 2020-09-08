@@ -13,11 +13,10 @@ import (
 // PlanetService : interface to service
 type PlanetService interface {
 	GetAll(params *url.Values) ([]model.Planet, error)
-	GetByID(id string) (model.Planet, error)
+	GetByID(id string) (*model.Planet, error)
 	Create(planet model.Planet) (model.Planet, error)
 	Update(id string, planet model.Planet) error
 	Delete(id string) error
-	ValidatePlanet(planet *model.Planet) error
 }
 
 // PlanetService : struct PlanetService
@@ -37,7 +36,7 @@ func (*service) GetAll(params *url.Values) ([]model.Planet, error) {
 }
 
 // GetByID : Get planet by id
-func (*service) GetByID(id string) (model.Planet, error) {
+func (*service) GetByID(id string) (*model.Planet, error) {
 	return planetDao.GetByID(id)
 }
 
@@ -58,7 +57,7 @@ func (*service) Delete(id string) error {
 }
 
 // ValidatePlanet : Validate fields
-func (*service) ValidatePlanet(planet *model.Planet) error {
+func ValidatePlanet(planet *model.Planet) error {
 	if planet == nil {
 		return errors.New("The planet is empty")
 	}

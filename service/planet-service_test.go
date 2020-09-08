@@ -40,24 +40,6 @@ func (mock *MockDAO) Update(id string, planet model.Planet) error {
 	return args.Error(0)
 }
 
-func TestValidateEmptyPlanet(t *testing.T) {
-	testService := NewPlanetService(nil)
-
-	err := testService.ValidatePlanet(nil)
-
-	assert.NotNil(t, err)
-	assert.Equal(t, "The planet is empty", err.Error())
-}
-
-func TestValidateEmptyNamePlanet(t *testing.T) {
-	testService := NewPlanetService(nil)
-	planet := model.Planet{Nome: "", Terreno: "", Clima: "", CountAparicoes: 0}
-	err := testService.ValidatePlanet(&planet)
-
-	assert.NotNil(t, err)
-	assert.Equal(t, "The planet name is empty", err.Error())
-}
-
 func TestGetAll(t *testing.T) {
 	// Setup expectation
 	mockDao := new(MockDAO)

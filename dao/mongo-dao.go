@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net/url"
 	"time"
@@ -55,19 +56,19 @@ func (*repo) GetAll(params *url.Values) ([]model.Planet, error) {
 	}
 	cur, err := db.Collection(collection).Find(context.TODO(), filter, options.Find())
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	} else {
 		for cur.Next(context.TODO()) {
 			var elem model.Planet
 			err := cur.Decode(&elem)
 			if err != nil {
-				log.Fatal(err)
+				return nil, err
 			}
 
 			results = append(results, elem)
 		}
 		if err := cur.Err(); err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		cur.Close(context.TODO())
 	}
@@ -75,10 +76,10 @@ func (*repo) GetAll(params *url.Values) ([]model.Planet, error) {
 }
 
 // GetByID : Get planet by ID
-func (*repo) GetByID(id string) (model.Planet, error) {
+func (*repo) GetByID(id string) (*model.Planet, error) {
 	objectID, erro := primitive.ObjectIDFromHex(id)
 	if erro != nil {
-		log.Fatal(erro)
+		return nil, errors.New("Invalid ID")
 	}
 	filter := bson.M{
 		"_id": bson.M{
@@ -87,7 +88,7 @@ func (*repo) GetByID(id string) (model.Planet, error) {
 	}
 	var planet model.Planet
 	err := db.Collection(collection).FindOne(context.TODO(), filter).Decode(&planet)
-	return planet, err
+	return &planet, err
 }
 
 // Create : Create a planet
@@ -103,8 +104,7 @@ func (*repo) Create(planet model.Planet) (model.Planet, error) {
 func (*repo) Delete(id string) error {
 	objectID, erro := primitive.ObjectIDFromHex(id)
 	if erro != nil {
-		log.Fatal(erro)
-		return erro
+		return errors.New("Invalid ID")
 	}
 	filter := bson.M{
 		"_id": bson.M{
@@ -113,7 +113,7 @@ func (*repo) Delete(id string) error {
 	}
 	_, err := db.Collection(collection).DeleteMany(context.TODO(), filter)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	return err
 }
@@ -122,8 +122,7 @@ func (*repo) Delete(id string) error {
 func (*repo) Update(id string, planet model.Planet) error {
 	objectID, erro := primitive.ObjectIDFromHex(id)
 	if erro != nil {
-		log.Fatal(erro)
-		return erro
+		return errors.New("Invalid ID")
 	}
 	filter := bson.M{
 		"_id": bson.M{

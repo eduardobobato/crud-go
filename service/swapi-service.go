@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	model "github.com/eduardobobato/crud-go/model"
@@ -11,8 +10,8 @@ import (
 
 // SwAPIService : interface
 type SwAPIService interface {
-	FindPlannet(nomePlaneta string) model.PlanetAPI
-	Find(url string) model.ReturnAPI
+	FindPlannet(nomePlaneta string) (model.PlanetAPI, error)
+	Find(url string) (*model.ReturnAPI, error)
 }
 
 // api : Sctruct
@@ -30,12 +29,15 @@ func NewSwAPIService() SwAPIService {
 }
 
 // FindPlannet : Find plannet by Name
-func (m *swAPI) FindPlannet(nomePlaneta string) model.PlanetAPI {
+func (m *swAPI) FindPlannet(nomePlaneta string) (model.PlanetAPI, error) {
 	url := APIURL + PLANET
 	var planeta model.PlanetAPI
 	hasMath := false
 	for !hasMath && url != "" && nomePlaneta != "" {
-		var response = m.Find(url)
+		var response, err = m.Find(url)
+		if err != nil {
+			return planeta, err
+		}
 		for _, value := range response.Planetas {
 			if value.Nome == nomePlaneta {
 				planeta = value
@@ -45,22 +47,22 @@ func (m *swAPI) FindPlannet(nomePlaneta string) model.PlanetAPI {
 		}
 		url = response.URLProximo
 	}
-	return planeta
+	return planeta, nil
 }
 
-func (*swAPI) Find(url string) model.ReturnAPI {
+func (*swAPI) Find(url string) (*model.ReturnAPI, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	var response model.ReturnAPI
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	return response
+	return &response, nil
 }

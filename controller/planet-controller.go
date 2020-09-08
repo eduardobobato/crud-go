@@ -39,6 +39,7 @@ func NewPlanetController(service service.PlanetService, sw service.SwAPIService)
 //
 // responses:
 //	200: planetsResponse
+//  500: serviceErrorResponse
 
 // GetAll : Get all planets
 func (*controller) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -55,11 +56,13 @@ func (*controller) GetAll(w http.ResponseWriter, r *http.Request) {
 // Return a planet by id
 // responses:
 //	200: planetResponse
+//  400: serviceErrorResponse
 
 // GetByID : Get planet by id
 func (*controller) GetByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	planet, err := planetSerive.GetByID(params["id"])
+	id := params["id"]
+	planet, err := planetSerive.GetByID(id)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: err.Error()})
 		return
@@ -71,7 +74,9 @@ func (*controller) GetByID(w http.ResponseWriter, r *http.Request) {
 // Create a new planet
 //
 // responses:
-//	200: planetResponse
+//	201: planetResponse
+//  400: serviceErrorResponse
+//  500: serviceErrorResponse
 
 // Create : Create a planet
 func (*controller) Create(w http.ResponseWriter, r *http.Request) {
@@ -81,11 +86,15 @@ func (*controller) Create(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: "Invalid request payload"})
 		return
 	}
-	if err := planetSerive.ValidatePlanet(&planet); err != nil {
+	if err := service.ValidatePlanet(&planet); err != nil {
 		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: err.Error()})
 		return
 	}
-	planetAPI := swService.FindPlannet(planet.Nome)
+	planetAPI, err := swService.FindPlannet(planet.Nome)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, errors.ServiceError{Message: err.Error()})
+		return
+	}
 	if planetAPI.Filmes != nil {
 		planet.CountAparicoes = len(planetAPI.Filmes)
 	}
@@ -102,6 +111,8 @@ func (*controller) Create(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //	200: planetResponse
+//  400: serviceErrorResponse
+//  500: serviceErrorResponse
 
 // Update : Update a planet
 func (*controller) Update(w http.ResponseWriter, r *http.Request) {
@@ -112,7 +123,7 @@ func (*controller) Update(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: "Invalid request payload"})
 		return
 	}
-	if err := planetSerive.ValidatePlanet(&planet); err != nil {
+	if err := service.ValidatePlanet(&planet); err != nil {
 		respondWithError(w, http.StatusBadRequest, errors.ServiceError{Message: err.Error()})
 		return
 	}
@@ -128,6 +139,7 @@ func (*controller) Update(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //	200: planetResponse
+//  500: serviceErrorResponse
 
 // Delete : Delete a planet
 func (*controller) Delete(w http.ResponseWriter, r *http.Request) {
