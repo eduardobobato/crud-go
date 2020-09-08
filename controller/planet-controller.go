@@ -1,8 +1,9 @@
-package planetrouter
+package controller
 
 import (
 	"encoding/json"
 	"net/http"
+
 	model "github.com/eduardobobato/crud-go/model"
 	service "github.com/eduardobobato/crud-go/service"
 
@@ -24,6 +25,12 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
+// swagger:route GET /planet planet GetAllPlanets
+// Return a list of planets
+// responses:
+//	200: planetsResponse
+
+// TODO: Incluir optional param de queryParam
 // GetAll : Get all planets
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
@@ -35,6 +42,11 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, planets)
 }
 
+// swagger:route GET /planet/{id} planet FindPlanetById
+// Return a planet by id
+// responses:
+//	200: planetResponse
+
 // GetByID : Get planet by id
 func GetByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
@@ -45,6 +57,12 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJSON(w, http.StatusOK, planet)
 }
+
+// swagger:route POST /planet planet CreatePlanet
+// Create a new planet
+//
+// responses:
+//	200: planetResponse
 
 // Create : Create a planet
 func Create(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +80,12 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, newPlanet)
 }
 
+// swagger:route PUT /planet planet UpdatePlanetById
+// Update a planet details by id
+//
+// responses:
+//	200: planetResponse
+
 // Update : Update a planet
 func Update(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
@@ -77,6 +101,12 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": planet.Nome + " atualizado com sucesso!"})
 }
+
+// swagger:route DELETE /planet/{id} planet DeletePlanetById
+// Delete a planet by id
+//
+// responses:
+//	201: planetResponse
 
 // Delete : Delete a planet
 func Delete(w http.ResponseWriter, r *http.Request) {

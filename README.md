@@ -14,4 +14,9 @@ go get github.com/eduardobobato/crud-go/router
 go run .\main.go
 
 ### Generate Swagger
+* go get -u github.com/go-swagger/go-swagger/cmd/swagger
 * swagger generate spec -o ./swagger.yaml --scan-models
+
+### Rondando no Docker
+docker build -f "Dockerfile" -t crud-go:1.0.0 .
+docker run -d -p 3333:3333 crud-go:1.0.0

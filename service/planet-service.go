@@ -1,9 +1,11 @@
 package service
 
 import (
+	"errors"
+	"net/url"
+
 	DAO "github.com/eduardobobato/crud-go/config/dao"
 	model "github.com/eduardobobato/crud-go/model"
-	"net/url"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -42,4 +44,14 @@ func (m PlanetService) Update(id string, planet model.Planet) error {
 // Delete : Delete a planet
 func (m PlanetService) Delete(id string) error {
 	return dao.Delete(id)
+}
+
+func (m PlanetService) ValidatePlanet(planet *model.Planet) error {
+	if planet == nil {
+		return errors.New("The planet is empty")
+	}
+	if planet.Nome == "" {
+		return errors.New("The planet name is empty")
+	}
+	return nil
 }
