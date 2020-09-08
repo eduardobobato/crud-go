@@ -57,21 +57,20 @@ func (*repo) GetAll(params *url.Values) ([]model.Planet, error) {
 	cur, err := db.Collection(collection).Find(context.TODO(), filter, options.Find())
 	if err != nil {
 		return nil, err
-	} else {
-		for cur.Next(context.TODO()) {
-			var elem model.Planet
-			err := cur.Decode(&elem)
-			if err != nil {
-				return nil, err
-			}
-
-			results = append(results, elem)
-		}
-		if err := cur.Err(); err != nil {
+	}
+	for cur.Next(context.TODO()) {
+		var elem model.Planet
+		err := cur.Decode(&elem)
+		if err != nil {
 			return nil, err
 		}
-		cur.Close(context.TODO())
+
+		results = append(results, elem)
 	}
+	if err := cur.Err(); err != nil {
+		return nil, err
+	}
+	cur.Close(context.TODO())
 	return results, err
 }
 
