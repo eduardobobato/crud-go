@@ -3,9 +3,10 @@ package dao
 import (
 	"context"
 	"log"
-	model "github.com/eduardobobato/crud-go/model"
 	"net/url"
 	"time"
+
+	"github.com/eduardobobato/crud-go/model"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

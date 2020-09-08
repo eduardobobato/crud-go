@@ -20,32 +20,32 @@ import (
 	"log"
 	"net/http"
 
-	Config "github.com/eduardobobato/crud-go/config"
-	PlanetDAO "github.com/eduardobobato/crud-go/config/dao"
-	planetrouter "github.com/eduardobobato/crud-go/router"
+	"github.com/eduardobobato/crud-go/config"
+	"github.com/eduardobobato/crud-go/controller"
+	"github.com/eduardobobato/crud-go/dao"
 	"github.com/go-openapi/runtime/middleware"
 
 	"github.com/gorilla/mux"
 )
 
-var dao = PlanetDAO.PlanetDAO{}
-var config = Config.Config{}
+var planetDao = dao.PlanetDAO{}
+var configAPI = config.Config{}
 
 func init() {
-	config.Read()
-	dao.ServerURI = config.ServerURI
-	dao.Database = config.Database
-	dao.Collection = config.Collection
-	dao.Connect()
+	configAPI.Read()
+	planetDao.ServerURI = configAPI.ServerURI
+	planetDao.Database = configAPI.Database
+	planetDao.Collection = configAPI.Collection
+	planetDao.Connect()
 }
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/api/v1/planet", planetrouter.GetAll).Methods("GET")
-	r.HandleFunc("/api/v1/planet/{id}", planetrouter.GetByID).Methods("GET")
-	r.HandleFunc("/api/v1/planet", planetrouter.Create).Methods("POST")
-	r.HandleFunc("/api/v1/planet/{id}", planetrouter.Update).Methods("PUT")
-	r.HandleFunc("/api/v1/planet/{id}", planetrouter.Delete).Methods("DELETE")
+	r.HandleFunc("/api/v1/planet", controller.GetAll).Methods("GET")
+	r.HandleFunc("/api/v1/planet/{id}", controller.GetByID).Methods("GET")
+	r.HandleFunc("/api/v1/planet", controller.Create).Methods("POST")
+	r.HandleFunc("/api/v1/planet/{id}", controller.Update).Methods("PUT")
+	r.HandleFunc("/api/v1/planet/{id}", controller.Delete).Methods("DELETE")
 
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
 	sh := middleware.Redoc(opts, nil)

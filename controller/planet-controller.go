@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	model "github.com/eduardobobato/crud-go/model"
-	service "github.com/eduardobobato/crud-go/service"
+	"github.com/eduardobobato/crud-go/model"
+	"github.com/eduardobobato/crud-go/service"
 
 	"github.com/gorilla/mux"
 )
