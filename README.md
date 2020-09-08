@@ -9,6 +9,9 @@ go get github.com/stretchr/testify
 ### Rodando App
 go run .\main.go
 
+### Rodando os testes
+go test ./service/... ./controller/...
+
 ### Generate Swagger
 * go get -u github.com/go-swagger/go-swagger/cmd/swagger
 * swagger generate spec -o ./swagger.yaml --scan-models
@@ -16,15 +19,3 @@ go run .\main.go
 ### Rondando no Docker
 docker build -f "Dockerfile" -t crud-go:1.0.0 .
 docker run -d -p 3333:3333 crud-go:1.0.0
-
-### Parameter of GetAllPlanets
-parameters:
-  - name: Nome
-    in: query
-    type: string
-  - name: Clima
-    in: query
-    type: string
-  - name: Terreno
-    in: query
-    type: string
