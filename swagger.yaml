@@ -1,0 +1,106 @@
+basePath: /api/v1
+consumes:
+- application/json
+definitions:
+  ObjectID:
+    items:
+      format: uint8
+      type: integer
+    title: ObjectID is the BSON ObjectID type.
+    type: array
+    x-go-package: go.mongodb.org/mongo-driver/bson/primitive
+  Planet:
+    description: Planet defines the structure for an API planet
+    properties:
+      Clima:
+        description: the climate for this planet
+        maxLength: 255
+        type: string
+      CountAparicoes:
+        description: the number of appearances in swatter filts
+        format: int64
+        type: integer
+      ID:
+        $ref: '#/definitions/ObjectID'
+      Nome:
+        description: the name for this planet
+        maxLength: 255
+        type: string
+      Terreno:
+        description: the ground for this planet
+        maxLength: 255
+        type: string
+    required:
+    - Nome
+    - Clima
+    - Terreno
+    type: object
+    x-go-package: _/D_/ProjetosPessoais/crud-go/model
+info:
+  contact:
+    email: eduardobobato@hotmail.com.br
+    name: Eduardo Bobato
+  description: Documentation for Planet API
+  title: Planet API.
+  version: 1.0.0
+paths:
+  /planet:
+    get:
+      description: Return a list of planets
+      operationId: GetAllPlanets
+      responses:
+        "200":
+          $ref: '#/responses/planetsResponse'
+      tags:
+      - planet
+    post:
+      description: Create a new planet
+      operationId: CreatePlanet
+      responses:
+        "200":
+          $ref: '#/responses/planetResponse'
+      tags:
+      - planet
+    put:
+      description: Update a planet details by id
+      operationId: UpdatePlanetById
+      responses:
+        "200":
+          $ref: '#/responses/planetResponse'
+      tags:
+      - planet
+  /planet/{id}:
+    delete:
+      description: Delete a planet by id
+      operationId: DeletePlanetById
+      responses:
+        "201":
+          $ref: '#/responses/planetResponse'
+      tags:
+      - planet
+    get:
+      description: Return a planet by id
+      operationId: FindPlanetById
+      responses:
+        "200":
+          $ref: '#/responses/planetResponse'
+      tags:
+      - planet
+produces:
+- application/json
+responses:
+  planetResponse:
+    description: A single of planet
+    schema:
+      items:
+        $ref: '#/definitions/Planet'
+      type: array
+  planetsResponse:
+    description: A list of planet
+    schema:
+      items:
+        $ref: '#/definitions/Planet'
+      type: array
+schemes:
+- http
+swagger: "2.0"

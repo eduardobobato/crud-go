@@ -16,12 +16,14 @@
 package main
 
 import (
-	Config "github.com/eduardobobato/crud-go/config"
-	PlanetDAO "github.com/eduardobobato/crud-go/config/dao"
 	"fmt"
 	"log"
 	"net/http"
+
+	Config "github.com/eduardobobato/crud-go/config"
+	PlanetDAO "github.com/eduardobobato/crud-go/config/dao"
 	planetrouter "github.com/eduardobobato/crud-go/router"
+	"github.com/go-openapi/runtime/middleware"
 
 	"github.com/gorilla/mux"
 )
@@ -44,6 +46,11 @@ func main() {
 	r.HandleFunc("/api/v1/planet", planetrouter.Create).Methods("POST")
 	r.HandleFunc("/api/v1/planet/{id}", planetrouter.Update).Methods("PUT")
 	r.HandleFunc("/api/v1/planet/{id}", planetrouter.Delete).Methods("DELETE")
+
+	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.Redoc(opts, nil)
+	r.Handle("/docs", sh)
+	r.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
 	var port = ":3333"
 	fmt.Println("Server running in port:", port)
