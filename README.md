@@ -15,9 +15,13 @@
 ### Rondando no Docker
 * docker build -f "Dockerfile" -t crud-go:1.0.0 .
 * docker run -d -p 3333:3333 crud-go:1.0.0
+* docker run -d -p 3333:3333 eduardobobato/crud-go:1.0.0
 
 #### Com Swarm
 * docker-compose up --build
+
+#### Image no DockerHub
+* https://hub.docker.com/repository/docker/eduardobobato/crud-go
 
 ### Generate Swagger
 * go get -u github.com/go-swagger/go-swagger/cmd/swagger
