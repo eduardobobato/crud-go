@@ -12,7 +12,7 @@ import (
 
 // PlanetService : interface to service
 type PlanetService interface {
-	GetAll(params url.Values) ([]model.Planet, error)
+	GetAll(params *url.Values) ([]model.Planet, error)
 	GetByID(id string) (model.Planet, error)
 	Create(planet model.Planet) (model.Planet, error)
 	Update(id string, planet model.Planet) error
@@ -28,13 +28,13 @@ var planetDao dao.PlanetDao
 
 // NewPlanetService : Instance a new service
 func NewPlanetService(planetDAO dao.PlanetDao, sw SwAPI) PlanetService {
-	api = sw
 	planetDao = planetDAO
+	api = sw
 	return &service{}
 }
 
 // GetAll : Get all planets
-func (*service) GetAll(params url.Values) ([]model.Planet, error) {
+func (*service) GetAll(params *url.Values) ([]model.Planet, error) {
 	return planetDao.GetAll(params)
 }
 

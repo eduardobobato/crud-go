@@ -37,18 +37,20 @@ func NewMongoDAO(config config.Config) PlanetDao {
 }
 
 // GetAll : Get all planets have optional Query param 'Nome'
-func (*repo) GetAll(params url.Values) ([]model.Planet, error) {
+func (*repo) GetAll(params *url.Values) ([]model.Planet, error) {
 	var results []model.Planet
 	filter := bson.M{}
-	for key, value := range params {
-		if key == "Nome" {
-			filter["Nome"] = bson.M{"$in": value}
-		}
-		if key == "Clima" {
-			filter["Clima"] = bson.M{"$in": value}
-		}
-		if key == "Terreno" {
-			filter["Terreno"] = bson.M{"$in": value}
+	if params != nil {
+		for key, value := range *params {
+			if key == "Nome" {
+				filter["Nome"] = bson.M{"$in": value}
+			}
+			if key == "Clima" {
+				filter["Clima"] = bson.M{"$in": value}
+			}
+			if key == "Terreno" {
+				filter["Terreno"] = bson.M{"$in": value}
+			}
 		}
 	}
 	cur, err := db.Collection(collection).Find(context.TODO(), filter, options.Find())

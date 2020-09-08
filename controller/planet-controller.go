@@ -40,7 +40,7 @@ func NewPlanetController(service service.PlanetService) PlanetController {
 // GetAll : Get all planets
 func (*controller) GetAll(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
-	planets, err := planetSerive.GetAll(params)
+	planets, err := planetSerive.GetAll(&params)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, errors.ServiceError{Message: err.Error()})
 		return
