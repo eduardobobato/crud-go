@@ -14,7 +14,6 @@ definitions:
     properties:
       Clima:
         description: the climate for this planet
-        maxLength: 255
         type: string
       CountAparicoes:
         description: the number of appearances in swatter filts
@@ -24,18 +23,25 @@ definitions:
         $ref: '#/definitions/ObjectID'
       Nome:
         description: the name for this planet
-        maxLength: 255
         type: string
       Terreno:
         description: the ground for this planet
-        maxLength: 255
         type: string
     required:
     - Nome
     - Clima
     - Terreno
     type: object
-    x-go-package: _/D_/ProjetosPessoais/crud-go/model
+    x-go-package: github.com/eduardobobato/crud-go/model
+  ServiceError:
+    description: 'ServiceError : business error struct'
+    properties:
+      message:
+        description: The error message
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: github.com/eduardobobato/crud-go/errors
 info:
   contact:
     email: eduardobobato@hotmail.com.br
@@ -49,26 +55,35 @@ paths:
       description: Return a list of planets
       operationId: GetAllPlanets
       parameters:
-        - name: Nome
-          in: query
-          type: string
-        - name: Clima
-          in: query
-          type: string
-        - name: Terreno
-          in: query
-          type: string
+      - description: Planet name.
+        in: query
+        name: Nome
+        type: string
+      - description: Planet climate.
+        in: query
+        name: Clima
+        type: string
+      - description: Planet ground.
+        in: query
+        name: Terreno
+        type: string
       responses:
         "200":
           $ref: '#/responses/planetsResponse'
+        "500":
+          $ref: '#/responses/serviceErrorResponse'
       tags:
       - planet
     post:
       description: Create a new planet
       operationId: CreatePlanet
       responses:
-        "200":
+        "201":
           $ref: '#/responses/planetResponse'
+        "400":
+          $ref: '#/responses/serviceErrorResponse'
+        "500":
+          $ref: '#/responses/serviceErrorResponse'
       tags:
       - planet
     put:
@@ -77,6 +92,10 @@ paths:
       responses:
         "200":
           $ref: '#/responses/planetResponse'
+        "400":
+          $ref: '#/responses/serviceErrorResponse'
+        "500":
+          $ref: '#/responses/serviceErrorResponse'
       tags:
       - planet
   /planet/{id}:
@@ -84,8 +103,10 @@ paths:
       description: Delete a planet by id
       operationId: DeletePlanetById
       responses:
-        "201":
+        "200":
           $ref: '#/responses/planetResponse'
+        "500":
+          $ref: '#/responses/serviceErrorResponse'
       tags:
       - planet
     get:
@@ -94,6 +115,8 @@ paths:
       responses:
         "200":
           $ref: '#/responses/planetResponse'
+        "400":
+          $ref: '#/responses/serviceErrorResponse'
       tags:
       - planet
 produces:
@@ -102,15 +125,17 @@ responses:
   planetResponse:
     description: A single of planet
     schema:
-      items:
-        $ref: '#/definitions/Planet'
-      type: array
+      $ref: '#/definitions/Planet'
   planetsResponse:
     description: A list of planet
     schema:
       items:
         $ref: '#/definitions/Planet'
       type: array
+  serviceErrorResponse:
+    description: A error response
+    schema:
+      $ref: '#/definitions/ServiceError'
 schemes:
 - http
 swagger: "2.0"

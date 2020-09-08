@@ -1,5 +1,7 @@
 package model
 
+import "github.com/eduardobobato/crud-go/errors"
+
 // PlanetFilter in query
 // swagger:parameters GetAllPlanets
 type PlanetFilter struct {
@@ -32,5 +34,13 @@ type planetsResponseWrapper struct {
 type planetResponseWrapper struct {
 	// A planet
 	// in: body
-	Body []Planet
+	Body Planet
+}
+
+// A error response
+// swagger:response serviceErrorResponse
+type serviceErrorResponseWrapper struct {
+	// A planet
+	// in: body
+	Body errors.ServiceError
 }
