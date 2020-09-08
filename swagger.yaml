@@ -94,8 +94,6 @@ paths:
           $ref: '#/responses/planetResponse'
         "400":
           $ref: '#/responses/serviceErrorResponse'
-        "500":
-          $ref: '#/responses/serviceErrorResponse'
       tags:
       - planet
   /planet/{id}:
@@ -105,7 +103,7 @@ paths:
       responses:
         "200":
           $ref: '#/responses/planetResponse'
-        "500":
+        "400":
           $ref: '#/responses/serviceErrorResponse'
       tags:
       - planet
